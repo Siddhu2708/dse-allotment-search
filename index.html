@@ -272,315 +272,480 @@
 
 <script>
 
-    /* =========================================================
-       CAP ROUND-II JSON FILE
-       ========================================================= */
+const DATA_FILE = "./allotment_data.json";
 
-    const DATA_FILE = "./allotment_data.json";
-
-    let allotmentData = [];
+let allotmentData = [];
 
 
-    /* =========================================================
-       LOAD JSON
-       ========================================================= */
+/* =========================================================
+   GET VALUE FROM MULTIPLE POSSIBLE JSON FIELD NAMES
+   ========================================================= */
 
-    async function loadData() {
+function getValue(record, keys) {
 
-        const status = document.getElementById("status");
+    for (const key of keys) {
+
+        if (
+            record[key] !== undefined &&
+            record[key] !== null &&
+            String(record[key]).trim() !== ""
+        ) {
+            return record[key];
+        }
+    }
+
+    return "N/A";
+}
+
+
+/* =========================================================
+   LOAD JSON
+   ========================================================= */
+
+async function loadData() {
+
+    const status = document.getElementById("status");
+
+    try {
+
+        const response = await fetch(DATA_FILE + "?v=" + Date.now());
+
+        if (!response.ok) {
+            throw new Error(
+                "HTTP Error " + response.status
+            );
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+            throw new Error(
+                "JSON must contain an array of records."
+            );
+        }
+
+        allotmentData = data;
+
+        status.innerHTML = "";
+
+        console.log(
+            "Loaded records:",
+            allotmentData.length
+        );
+
+        console.log(
+            "First JSON record:",
+            allotmentData[0]
+        );
+
+    } catch (error) {
+
+        console.error(error);
 
         status.innerHTML = `
-            <div class="loading">
-                Loading CAP Round-II allotment data...
+            <div class="error">
+                <strong>Unable to load allotment data.</strong>
+
+                <p>
+                    Make sure
+                    <strong>allotment_data.json</strong>
+                    is in the same folder as
+                    <strong>index.html</strong>.
+                </p>
+
+                <p>
+                    Error:
+                    ${escapeHTML(error.message)}
+                </p>
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function searchCandidates(query) {
+
+    query = query.trim().toLowerCase();
+
+    if (!query) {
+
+        document.getElementById("results").innerHTML = "";
+
+        return;
+    }
+
+
+    const results = allotmentData.filter(record => {
+
+        const applicationId = String(
+            getValue(record, [
+                "application_id",
+                "applicationId",
+                "Application ID",
+                "ApplicationID"
+            ])
+        ).toLowerCase();
+
+
+        const name = String(
+            getValue(record, [
+                "name",
+                "candidate_name",
+                "candidateName",
+                "student_name",
+                "studentName",
+                "Candidate Name",
+                "Name"
+            ])
+        ).toLowerCase();
+
+
+        /*
+         Application ID = exact match
+         Name = partial match
+        */
+
+        return (
+            applicationId === query ||
+            name.includes(query)
+        );
+
+    });
+
+
+    displayResults(results);
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+   ========================================================= */
+
+function displayResults(results) {
+
+    const container =
+        document.getElementById("results");
+
+
+    if (results.length === 0) {
+
+        container.innerHTML = `
+            <div class="error">
+                No CAP Round-II allotment found.
             </div>
         `;
 
-        try {
-
-            const response = await fetch(DATA_FILE);
-
-            if (!response.ok) {
-                throw new Error(
-                    "HTTP Error " + response.status
-                );
-            }
-
-            const data = await response.json();
-
-            if (!Array.isArray(data)) {
-                throw new Error(
-                    "JSON data must be an array."
-                );
-            }
-
-            allotmentData = data;
-
-            status.innerHTML = "";
-
-            console.log(
-                "CAP Round-II records loaded:",
-                allotmentData.length
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            status.innerHTML = `
-                <div class="error">
-                    <strong>Unable to load CAP Round-II allotment data.</strong>
-
-                    <p>
-                        Please make sure
-                        <strong>allotment_data.json</strong>
-                        is uploaded in the same folder as
-                        <strong>index.html</strong>.
-                    </p>
-
-                    <p>
-                        Error:
-                        ${escapeHTML(error.message)}
-                    </p>
-                </div>
-            `;
-        }
+        return;
     }
 
 
-    /* =========================================================
-       SEARCH
-       ========================================================= */
-
-    function searchCandidates(query) {
-
-        query = query.trim().toLowerCase();
-
-        if (!query) {
-
-            document.getElementById("results").innerHTML = "";
-
-            return;
-        }
-
-        const results = allotmentData.filter(record => {
-
-            const applicationId =
-                String(record.application_id || "")
-                .toLowerCase();
-
-            const name =
-                String(record.name || "")
-                .toLowerCase();
-
-            return (
-                applicationId === query ||
-                name.includes(query)
-            );
-        });
-
-        displayResults(results);
-    }
+    let html = `
+        <div class="result-count">
+            ${results.length} result(s) found
+        </div>
+    `;
 
 
-    /* =========================================================
-       DISPLAY RESULTS
-       ========================================================= */
+    results.forEach(record => {
 
-    function displayResults(results) {
 
-        const resultsContainer =
-            document.getElementById("results");
+        /* -----------------------------
+           GET ALL FIELDS
+        ----------------------------- */
 
-        if (results.length === 0) {
+        const applicationId = getValue(record, [
+            "application_id",
+            "applicationId",
+            "Application ID",
+            "ApplicationID"
+        ]);
 
-            resultsContainer.innerHTML = `
-                <div class="error">
-                    No CAP Round-II allotment found.
+
+        const name = getValue(record, [
+            "name",
+            "candidate_name",
+            "candidateName",
+            "student_name",
+            "studentName",
+            "Candidate Name",
+            "Name"
+        ]);
+
+
+        const gender = getValue(record, [
+            "gender",
+            "Gender"
+        ]);
+
+
+        const category = getValue(record, [
+            "category",
+            "Category",
+            "candidate_category"
+        ]);
+
+
+        const seatType = getValue(record, [
+            "seat_type",
+            "seatType",
+            "Seat Type",
+            "SeatType"
+        ]);
+
+
+        const institute = getValue(record, [
+            "institute",
+            "institute_name",
+            "instituteName",
+            "college",
+            "college_name",
+            "collegeName",
+            "Institute",
+            "Institute Name",
+            "Institute / College"
+        ]);
+
+
+        const course = getValue(record, [
+            "course",
+            "course_name",
+            "courseName",
+            "program",
+            "program_name",
+            "Course",
+            "Course Name"
+        ]);
+
+
+        const merit = getValue(record, [
+            "merit_no",
+            "meritNo",
+            "merit_rank",
+            "meritRank",
+            "rank",
+            "Merit No",
+            "Merit Rank",
+            "Merit / Rank"
+        ]);
+
+
+        const meritScore = getValue(record, [
+            "merit_score",
+            "meritScore",
+            "score",
+            "Merit Score"
+        ]);
+
+
+        const capRound = getValue(record, [
+            "cap_round",
+            "capRound",
+            "round",
+            "CAP Round"
+        ]);
+
+
+        /* -----------------------------
+           RESULT CARD
+        ----------------------------- */
+
+        html += `
+
+        <div class="candidate-card">
+
+            <h2>
+                ${escapeHTML(name)}
+            </h2>
+
+
+            <div class="details">
+
+
+                <!-- APPLICATION ID -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Application ID
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(applicationId)}
+                    </span>
+
                 </div>
-            `;
 
-            return;
-        }
 
-        let html = `
-            <div class="result-count">
-                ${results.length} result(s) found
+                <!-- CAP ROUND -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        CAP Round
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(capRound)}
+                    </span>
+
+                </div>
+
+
+                <!-- GENDER -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Gender
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(gender)}
+                    </span>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Category
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(category)}
+                    </span>
+
+                </div>
+
+
+                <!-- SEAT TYPE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Seat Type
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(seatType)}
+                    </span>
+
+                </div>
+
+
+                <!-- INSTITUTE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Institute / College
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(institute)}
+                    </span>
+
+                </div>
+
+
+                <!-- COURSE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Course
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(course)}
+                    </span>
+
+                </div>
+
+
+                <!-- MERIT -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Merit / Rank
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(merit)}
+                    </span>
+
+                </div>
+
+
+                <!-- MERIT SCORE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Merit Score
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(meritScore)}
+                    </span>
+
+                </div>
+
+
             </div>
+
+        </div>
+
         `;
 
-        results.forEach(record => {
-
-            html += `
-
-                <div class="candidate-card">
-
-                    <h2>
-                        ${escapeHTML(
-                            record.name || "N/A"
-                        )}
-                    </h2>
-
-                    <div class="details">
-
-                        <div class="detail institute">
-                            <span class="label">
-                                Institute
-                            </span>
-
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.institute || "N/A"
-                                )}
-                            </span>
-                        </div>
+    });
 
 
-                        <div class="detail course">
-                            <span class="label">
-                                Course
-                            </span>
-
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.course || "N/A"
-                                )}
-                            </span>
-                        </div>
+    container.innerHTML = html;
+}
 
 
-                        <div class="detail">
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
 
-                            <span class="label">
-                                Application ID
-                            </span>
+function escapeHTML(value) {
 
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.application_id || "N/A"
-                                )}
-                            </span>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span class="label">
-                                Gender
-                            </span>
-
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.gender || "N/A"
-                                )}
-                            </span>
-
-                        </div>
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 
-                        <div class="detail">
+/* =========================================================
+   SEARCH INPUT
+   ========================================================= */
 
-                            <span class="label">
-                                Category
-                            </span>
+document
+    .getElementById("searchInput")
+    .addEventListener("input", function () {
 
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.category || "N/A"
-                                )}
-                            </span>
+        searchCandidates(this.value);
 
-                        </div>
+    });
 
 
-                        <div class="detail">
+/* =========================================================
+   START
+   ========================================================= */
 
-                            <span class="label">
-                                Seat Type
-                            </span>
-
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.seat_type || "N/A"
-                                )}
-                            </span>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span class="label">
-                                Merit No
-                            </span>
-
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.merit_no ?? "N/A"
-                                )}
-                            </span>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span class="label">
-                                Merit Score
-                            </span>
-
-                            <span class="value">
-                                ${escapeHTML(
-                                    record.merit_score ?? "N/A"
-                                )}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-        });
-
-        resultsContainer.innerHTML = html;
-    }
-
-
-    /* =========================================================
-       ESCAPE HTML
-       Prevents HTML injection from JSON data.
-       ========================================================= */
-
-    function escapeHTML(value) {
-
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-
-    /* =========================================================
-       SEARCH EVENT
-       ========================================================= */
-
-    document
-        .getElementById("searchInput")
-        .addEventListener("input", function () {
-
-            searchCandidates(this.value);
-
-        });
-
-
-    /* =========================================================
-       START
-       ========================================================= */
-
-    loadData();
+loadData();
 
 </script>
 
