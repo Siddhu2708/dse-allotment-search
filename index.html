@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DSE 2026 | CAP Round-II Allotment Search</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f8;
+            color: #1f2937;
+        }
+
+        /* Header */
+        header {
+            background: #087f6b;
+            color: white;
+            padding: 28px 6%;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        /* Main */
+        main {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        /* Search box */
+        .search-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 17px 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 18px;
+            outline: none;
+        }
+
+        #searchInput:focus {
+            border-color: #087f6b;
+            box-shadow: 0 0 0 3px rgba(8,127,107,0.12);
+        }
+
+        .tip {
+            margin-top: 12px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Status */
+        #status {
+            margin-top: 20px;
+        }
+
+        .error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .loading {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* Results */
+        #results {
+            margin-top: 25px;
+        }
+
+        .result-count {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .candidate-card {
+            background: white;
+            border-left: 6px solid #087f6b;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .candidate-card h2 {
+            margin: 0 0 20px;
+            color: #087f6b;
+            font-size: 24px;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .detail {
+            background: #f5f8f8;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .label {
+            display: block;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .value {
+            display: block;
+            color: #111827;
+            font-size: 17px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        /* Institute section */
+        .institute {
+            grid-column: span 4;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+
+        .course {
+            grid-column: span 4;
+            background: #f0fdfa;
+            border: 1px solid #99f6e4;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            background: #123c36;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        footer a {
+            color: #a7f3d0;
+            text-decoration: none;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+
+            .details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .institute,
+            .course {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 22px 5%;
+            }
+
+            header h1 {
+                font-size: 23px;
+            }
+
+            main {
+                width: 94%;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .institute,
+            .course {
+                grid-column: span 1;
+            }
+
+            #searchInput {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>DSE 2026 • CAP Round-II Allotment Search</h1>
+    <p>
+        Search DSE CAP Round-II allotment data by Application ID or candidate name.
+    </p>
+</header>
+
+<main>
+
+    <section class="search-section">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Enter Application ID (e.g. DSE26167579) or candidate name..."
+            autocomplete="off"
+        >
+
+        <div class="tip">
+            Tip: Application ID gives an exact match.
+            Name search is partial and case-insensitive.
+        </div>
+
+        <div id="status"></div>
+
+    </section>
+
+    <section id="results"></section>
+
+</main>
+
+<footer>
+
+    <p>
+        DSE 2026 CAP Round-II Allotment Search
+    </p>
+
+    <p>
+        Developed by
+        <a
+            href="https://github.com/Siddhu2708"
+            target="_blank"
+        >
+            Siddharth Gaykhe
+        </a>
+    </p>
+
+</footer>
+
+
+<script>
+
+const DATA_FILE = "./allotment_data.json";
+
+let allotmentData = [];
+
+
+/* =========================================================
+   GET VALUE FROM MULTIPLE POSSIBLE JSON FIELD NAMES
+   ========================================================= */
+
+function getValue(record, keys) {
+
+    for (const key of keys) {
+
+        if (
+            record[key] !== undefined &&
+            record[key] !== null &&
+            String(record[key]).trim() !== ""
+        ) {
+            return record[key];
+        }
+    }
+
+    return "N/A";
+}
+
+
+/* =========================================================
+   LOAD JSON
+   ========================================================= */
+
+async function loadData() {
+
+    const status = document.getElementById("status");
+
+    try {
+
+        const response = await fetch(DATA_FILE + "?v=" + Date.now());
+
+        if (!response.ok) {
+            throw new Error(
+                "HTTP Error " + response.status
+            );
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+            throw new Error(
+                "JSON must contain an array of records."
+            );
+        }
+
+        allotmentData = data;
+
+        status.innerHTML = "";
+
+        console.log(
+            "Loaded records:",
+            allotmentData.length
+        );
+
+        console.log(
+            "First JSON record:",
+            allotmentData[0]
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.innerHTML = `
+            <div class="error">
+                <strong>Unable to load allotment data.</strong>
+
+                <p>
+                    Make sure
+                    <strong>allotment_data.json</strong>
+                    is in the same folder as
+                    <strong>index.html</strong>.
+                </p>
+
+                <p>
+                    Error:
+                    ${escapeHTML(error.message)}
+                </p>
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function searchCandidates(query) {
+
+    query = query.trim().toLowerCase();
+
+    if (!query) {
+
+        document.getElementById("results").innerHTML = "";
+
+        return;
+    }
+
+
+    const results = allotmentData.filter(record => {
+
+        const applicationId = String(
+            getValue(record, [
+                "application_id",
+                "applicationId",
+                "Application ID",
+                "ApplicationID"
+            ])
+        ).toLowerCase();
+
+
+        const name = String(
+            getValue(record, [
+                "name",
+                "candidate_name",
+                "candidateName",
+                "student_name",
+                "studentName",
+                "Candidate Name",
+                "Name"
+            ])
+        ).toLowerCase();
+
+
+        /*
+         Application ID = exact match
+         Name = partial match
+        */
+
+        return (
+            applicationId === query ||
+            name.includes(query)
+        );
+
+    });
+
+
+    displayResults(results);
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+   ========================================================= */
+
+function displayResults(results) {
+
+    const container =
+        document.getElementById("results");
+
+
+    if (results.length === 0) {
+
+        container.innerHTML = `
+            <div class="error">
+                No CAP Round-II allotment found.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    let html = `
+        <div class="result-count">
+            ${results.length} result(s) found
+        </div>
+    `;
+
+
+    results.forEach(record => {
+
+
+        /* -----------------------------
+           GET ALL FIELDS
+        ----------------------------- */
+
+        const applicationId = getValue(record, [
+            "application_id",
+            "applicationId",
+            "Application ID",
+            "ApplicationID"
+        ]);
+
+
+        const name = getValue(record, [
+            "name",
+            "candidate_name",
+            "candidateName",
+            "student_name",
+            "studentName",
+            "Candidate Name",
+            "Name"
+        ]);
+
+
+        const gender = getValue(record, [
+            "gender",
+            "Gender"
+        ]);
+
+
+        const category = getValue(record, [
+            "category",
+            "Category",
+            "candidate_category"
+        ]);
+
+
+        const seatType = getValue(record, [
+            "seat_type",
+            "seatType",
+            "Seat Type",
+            "SeatType"
+        ]);
+
+
+        const institute = getValue(record, [
+            "institute",
+            "institute_name",
+            "instituteName",
+            "college",
+            "college_name",
+            "collegeName",
+            "Institute",
+            "Institute Name",
+            "Institute / College"
+        ]);
+
+
+        const course = getValue(record, [
+            "course",
+            "course_name",
+            "courseName",
+            "program",
+            "program_name",
+            "Course",
+            "Course Name"
+        ]);
+
+
+        const merit = getValue(record, [
+            "merit_no",
+            "meritNo",
+            "merit_rank",
+            "meritRank",
+            "rank",
+            "Merit No",
+            "Merit Rank",
+            "Merit / Rank"
+        ]);
+
+
+        const meritScore = getValue(record, [
+            "merit_score",
+            "meritScore",
+            "score",
+            "Merit Score"
+        ]);
+
+
+        const capRound = getValue(record, [
+            "cap_round",
+            "capRound",
+            "round",
+            "CAP Round"
+        ]);
+
+
+        /* -----------------------------
+           RESULT CARD
+        ----------------------------- */
+
+        html += `
+
+        <div class="candidate-card">
+
+            <h2>
+                ${escapeHTML(name)}
+            </h2>
+
+
+            <div class="details">
+
+
+                <!-- APPLICATION ID -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Application ID
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(applicationId)}
+                    </span>
+
+                </div>
+
+
+                <!-- GENDER -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Gender
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(gender)}
+                    </span>
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Category
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(category)}
+                    </span>
+
+                </div>
+
+
+                <!-- SEAT TYPE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Seat Type
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(seatType)}
+                    </span>
+
+                </div>
+
+
+                <!-- INSTITUTE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Institute / College
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(institute)}
+                    </span>
+
+                </div>
+
+
+                <!-- COURSE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Course
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(course)}
+                    </span>
+
+                </div>
+
+
+                <!-- MERIT -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Merit / Rank
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(merit)}
+                    </span>
+
+                </div>
+
+
+                <!-- MERIT SCORE -->
+
+                <div class="detail">
+
+                    <span class="label">
+                        Merit Score
+                    </span>
+
+                    <span class="value">
+                        ${escapeHTML(meritScore)}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    container.innerHTML = html;
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   SEARCH INPUT
+   ========================================================= */
+
+document
+    .getElementById("searchInput")
+    .addEventListener("input", function () {
+
+        searchCandidates(this.value);
+
+    });
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+loadData();
+
+</script>
+
+</body>
+</html>
