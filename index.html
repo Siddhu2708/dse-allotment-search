@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DSE 2026 - CAP Allotment Search</title>
+    <title>DSE 2026 | CAP II Allotment Search</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -18,39 +20,54 @@
             color: #263238;
         }
 
+        /* HEADER */
+
         header {
             background: #087f6f;
             color: white;
-            padding: 25px 6%;
+            padding: 28px 6%;
         }
 
         header h1 {
             margin: 0;
             font-size: 30px;
+            font-weight: 700;
         }
 
         header p {
-            margin: 8px 0 0;
+            margin-top: 8px;
             font-size: 16px;
         }
+
+        /* NAVIGATION */
 
         nav {
             background: white;
             padding: 12px 6%;
             border-bottom: 1px solid #ddd;
+
             display: flex;
+            align-items: center;
             gap: 10px;
+
             flex-wrap: wrap;
         }
 
         nav button {
-            border: none;
             padding: 10px 18px;
+
+            border: none;
             border-radius: 6px;
-            cursor: pointer;
-            background: #e8eeee;
+
+            background: #e7eeee;
             color: #263238;
+
+            cursor: pointer;
             font-size: 14px;
+        }
+
+        nav button:hover {
+            background: #d5e5e3;
         }
 
         nav button.active {
@@ -58,150 +75,296 @@
             color: white;
         }
 
+        /* MAIN */
+
         .container {
             max-width: 1200px;
             margin: 30px auto;
             padding: 0 20px;
         }
 
+        /* SEARCH */
+
         .search-box {
             background: white;
+
             padding: 25px;
+
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+            box-shadow:
+                0 2px 10px rgba(0, 0, 0, 0.08);
         }
 
-        input {
+        #searchInput {
+
             width: 100%;
-            padding: 16px;
+
+            padding: 17px;
+
             border: 1px solid #ccd5d5;
+
             border-radius: 8px;
+
             font-size: 17px;
+
             outline: none;
         }
 
-        input:focus {
+        #searchInput:focus {
+
             border-color: #087f6f;
+
+            box-shadow:
+                0 0 0 2px rgba(8, 127, 111, 0.1);
         }
 
         .tip {
+
             margin-top: 10px;
+
             color: #607d8b;
+
             font-size: 14px;
         }
 
+        /* STATUS */
+
         .status {
+
             margin-top: 20px;
-            padding: 15px;
+
+            padding: 16px;
+
             border-radius: 8px;
+
             display: none;
+
+            line-height: 1.6;
         }
 
-        .error {
-            background: #ffebee;
-            color: #b71c1c;
-            border: 1px solid #ffcdd2;
-        }
+        .status.success {
 
-        .success {
             background: #e8f5e9;
+
             color: #1b5e20;
+
             border: 1px solid #c8e6c9;
         }
 
-        .result-count {
+        .status.error {
+
+            background: #ffebee;
+
+            color: #b71c1c;
+
+            border: 1px solid #ffcdd2;
+        }
+
+        /* RESULT COUNT */
+
+        #resultCount {
+
             margin: 25px 0 15px;
+
             font-size: 18px;
+
             font-weight: bold;
         }
 
+        /* RESULT CARD */
+
         .result {
+
             background: white;
+
             margin-bottom: 15px;
+
             padding: 20px;
+
             border-radius: 10px;
+
             border-left: 5px solid #087f6f;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.07);
         }
 
         .result h3 {
+
             margin-top: 0;
+
+            margin-bottom: 15px;
+
             color: #087f6f;
+
+            font-size: 20px;
         }
 
         .details {
+
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
             gap: 10px;
         }
 
         .detail {
+
             background: #f5f8f8;
-            padding: 10px;
+
+            padding: 12px;
+
             border-radius: 6px;
         }
 
         .label {
-            font-size: 12px;
-            color: #607d8b;
+
             display: block;
-            margin-bottom: 4px;
+
+            font-size: 12px;
+
+            color: #607d8b;
+
+            margin-bottom: 5px;
         }
 
         .value {
+
             font-weight: bold;
+
+            word-break: break-word;
         }
 
+        /* EMPTY */
+
         .empty {
+
+            background: white;
+
             text-align: center;
-            padding: 50px;
+
+            padding: 50px 20px;
+
+            border-radius: 10px;
+
             color: #607d8b;
         }
 
+        /* FOOTER */
+
         footer {
+
             margin-top: 50px;
+
             background: #263238;
+
             color: white;
-            padding: 25px 6%;
+
+            padding: 30px 6%;
+
             text-align: center;
         }
 
+        footer p {
+
+            color: #cfd8dc;
+        }
+
         footer a {
+
             color: #80cbc4;
+
             text-decoration: none;
-            margin: 0 8px;
+
+            margin: 0 10px;
+
+            font-weight: bold;
         }
 
         footer a:hover {
+
             text-decoration: underline;
         }
 
-        .loading {
-            color: #087f6f;
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            header h1 {
+                font-size: 23px;
+            }
+
+            header {
+                padding: 22px 5%;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .search-box {
+                padding: 18px;
+            }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
+<!-- HEADER -->
+
 <header>
-    <h1>DSE 2026 • CAP Round <span id="roundTitle">1</span> Allotment Search</h1>
+
+    <h1>
+        DSE 2026 • CAP Round
+        <span id="roundTitle">1</span>
+        Allotment Search
+    </h1>
+
     <p>
-        Search college allotment data using Application ID or candidate name.
+        Search college allotment information using Application ID
+        or candidate name.
     </p>
+
 </header>
 
+
+<!-- NAVIGATION -->
+
 <nav>
-    <button id="cap1Btn" class="active" onclick="changeRound(1)">
+
+    <button
+        id="cap1Btn"
+        class="active"
+        onclick="changeRound(1)"
+    >
         CAP Round 1
     </button>
 
-    <button id="cap2Btn" onclick="changeRound(2)">
+    <button
+        id="cap2Btn"
+        onclick="changeRound(2)"
+    >
         CAP Round 2
     </button>
+
 </nav>
 
+
+<!-- MAIN -->
+
 <div class="container">
+
+
+    <!-- SEARCH BOX -->
 
     <div class="search-box">
 
@@ -213,411 +376,987 @@
         >
 
         <div class="tip">
-            Tip: Application ID gives an exact match.
-            Name search is partial and case-insensitive.
+
+            Application ID gives an exact match.
+            Name search supports partial and case-insensitive matching.
+
         </div>
 
-        <div id="status" class="status"></div>
+
+        <!-- STATUS -->
+
+        <div
+            id="status"
+            class="status"
+        ></div>
 
     </div>
 
-    <div id="resultCount" class="result-count"></div>
+
+    <!-- RESULT COUNT -->
+
+    <div id="resultCount"></div>
+
+
+    <!-- RESULTS -->
 
     <div id="results">
+
         <div class="empty">
-            Enter an Application ID or candidate name to search.
+
+            Enter an Application ID or candidate name
+            to search allotment records.
+
         </div>
+
     </div>
+
 
 </div>
 
+
+<!-- FOOTER -->
+
 <footer>
 
-    <div>
-        <strong>DSE Allotment Search</strong>
-    </div>
+    <strong>
+        DSE Allotment Search
+    </strong>
 
     <p>
-        Developed for DSE 2026 CAP allotment search.
+        DSE 2026 CAP Allotment Search Platform
     </p>
 
-    <div>
-        <a href="https://github.com/Siddhu2708/dse-allotment-search"
-           target="_blank">
-            GitHub
+    <p>
+
+        <a
+            href="https://github.com/Siddhu2708/dse-allotment-search"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            GitHub Repository
         </a>
 
-        <a href="https://siddhu2708.github.io/dse-allotment-search/"
-           target="_blank">
+
+        <a
+            href="https://siddhu2708.github.io/dse-allotment-search/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
             Live Website
         </a>
-    </div>
+
+    </p>
 
 </footer>
 
 
+
 <script>
 
-    /*
-        IMPORTANT:
-        Keep allotment_data.json in the SAME folder as index.html.
 
-        Example:
+/*
+=========================================================
+GLOBAL VARIABLES
+=========================================================
+*/
 
-        dse-allotment-search/
-        ├── index.html
-        └── allotment_data.json
-    */
+let allData = [];
 
-    let allData = [];
-    let currentRound = 1;
-
-    const searchInput = document.getElementById("searchInput");
-    const resultsDiv = document.getElementById("results");
-    const resultCount = document.getElementById("resultCount");
-    const statusDiv = document.getElementById("status");
+let currentRound = 1;
 
 
-    /*
-        Get GitHub Pages base path automatically.
+/*
+=========================================================
+DOM ELEMENTS
+=========================================================
+*/
 
-        Example:
-        https://siddhu2708.github.io/dse-allotment-search/
+const searchInput =
+    document.getElementById("searchInput");
 
-        The JSON will be loaded from:
-        ./allotment_data.json
-    */
+const resultsDiv =
+    document.getElementById("results");
 
-    async function loadData() {
+const resultCount =
+    document.getElementById("resultCount");
 
-        showStatus(
-            "Loading allotment_data.json...",
-            "success"
-        );
+const statusDiv =
+    document.getElementById("status");
 
-        try {
 
-            const response = await fetch("./allotment_data.json");
 
-            if (!response.ok) {
-                throw new Error(
-                    "HTTP Error " + response.status
-                );
-            }
+/*
+=========================================================
+SAFE VALUE FUNCTION
+=========================================================
 
-            const data = await response.json();
+This prevents undefined/null errors.
+*/
 
-            /*
-                Support both:
+function safeValue(value) {
 
-                [
-                    {...},
-                    {...}
-                ]
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
 
-                and:
+        return "N/A";
 
-                {
-                    "records": [...]
-                }
-            */
-
-            if (Array.isArray(data)) {
-
-                allData = data;
-
-            } else if (Array.isArray(data.records)) {
-
-                allData = data.records;
-
-            } else if (Array.isArray(data.data)) {
-
-                allData = data.data;
-
-            } else {
-
-                throw new Error(
-                    "JSON format is not supported."
-                );
-            }
-
-            hideStatus();
-
-            resultCount.innerHTML =
-                "Total records loaded: " + allData.length;
-
-        } catch (error) {
-
-            console.error(error);
-
-            showStatus(
-                "Couldn't load allotment_data.json.<br><br>" +
-                "Make sure <b>allotment_data.json</b> is uploaded " +
-                "to the same GitHub repository folder as " +
-                "<b>index.html</b>.<br><br>" +
-                "Error: " + error.message,
-                "error"
-            );
-
-            resultsDiv.innerHTML = `
-                <div class="empty">
-                    <h3>Data file could not be loaded</h3>
-
-                    <p>
-                        Check that your GitHub repository contains:
-                    </p>
-
-                    <p>
-                        <b>index.html</b><br>
-                        <b>allotment_data.json</b>
-                    </p>
-
-                    <p>
-                        Both files must be in the repository root.
-                    </p>
-                </div>
-            `;
-        }
     }
 
+    return String(value);
 
-    function changeRound(round) {
+}
 
-        currentRound = round;
 
-        document.getElementById("roundTitle").textContent = round;
 
-        document.getElementById("cap1Btn")
-            .classList.toggle("active", round === 1);
+/*
+=========================================================
+SAFE NUMBER FORMAT
+=========================================================
 
-        document.getElementById("cap2Btn")
-            .classList.toggle("active", round === 2);
+This FIXES:
 
-        searchInput.value = "";
+Cannot read properties of undefined
+(reading 'toLocaleString')
+*/
 
-        resultsDiv.innerHTML = `
-            <div class="empty">
-                Enter an Application ID or candidate name to search CAP Round ${round}.
-            </div>
-        `;
+function formatNumber(value) {
 
-        resultCount.innerHTML = "";
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+
+        return "N/A";
 
     }
 
 
-    searchInput.addEventListener(
-        "input",
-        searchData
+    const number =
+        Number(value);
+
+
+    if (Number.isNaN(number)) {
+
+        return String(value);
+
+    }
+
+
+    return number.toLocaleString("en-IN");
+
+}
+
+
+
+/*
+=========================================================
+ESCAPE HTML
+=========================================================
+
+Protects the page when displaying JSON data.
+*/
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+
+/*
+=========================================================
+SHOW STATUS
+=========================================================
+*/
+
+function showStatus(
+    message,
+    type
+) {
+
+    statusDiv.innerHTML =
+        message;
+
+    statusDiv.className =
+        "status " + type;
+
+    statusDiv.style.display =
+        "block";
+
+}
+
+
+
+/*
+=========================================================
+HIDE STATUS
+=========================================================
+*/
+
+function hideStatus() {
+
+    statusDiv.style.display =
+        "none";
+
+}
+
+
+
+/*
+=========================================================
+LOAD JSON DATA
+=========================================================
+
+The JSON file MUST be:
+
+allotment_data.json
+
+and MUST be in the SAME folder as index.html.
+*/
+
+async function loadData() {
+
+    showStatus(
+        "Loading allotment data...",
+        "success"
     );
 
 
-    function searchData() {
+    try {
 
-        const query =
-            searchInput.value
-                .trim()
-                .toLowerCase();
 
-        if (!query) {
+        const response =
+            await fetch(
+                "./allotment_data.json"
+            );
 
-            resultsDiv.innerHTML = `
-                <div class="empty">
-                    Enter an Application ID or candidate name to search.
-                </div>
-            `;
 
-            resultCount.innerHTML = "";
+        if (!response.ok) {
 
-            return;
+            throw new Error(
+                "HTTP " +
+                response.status +
+                " - JSON file not found"
+            );
+
         }
 
 
-        const filtered = allData.filter(record => {
-
-            const applicationId =
-                String(
-                    record.application_id ||
-                    record.applicationId ||
-                    record.app_id ||
-                    ""
-                ).toLowerCase();
-
-            const name =
-                String(
-                    record.name ||
-                    record.candidate_name ||
-                    record.candidateName ||
-                    ""
-                ).toLowerCase();
+        const data =
+            await response.json();
 
 
-            /*
-                Exact Application ID match
-                OR
-                Partial name match
-            */
+        /*
+        Support different JSON structures.
+        */
 
-            return (
-                applicationId === query ||
-                name.includes(query)
+
+        if (Array.isArray(data)) {
+
+            allData =
+                data;
+
+        }
+
+        else if (
+            data.records &&
+            Array.isArray(data.records)
+        ) {
+
+            allData =
+                data.records;
+
+        }
+
+        else if (
+            data.data &&
+            Array.isArray(data.data)
+        ) {
+
+            allData =
+                data.data;
+
+        }
+
+        else if (
+            data.allotments &&
+            Array.isArray(data.allotments)
+        ) {
+
+            allData =
+                data.allotments;
+
+        }
+
+        else {
+
+            throw new Error(
+                "Unsupported JSON structure"
             );
 
-        });
+        }
 
 
-        displayResults(filtered);
+        hideStatus();
+
+
+        resultCount.innerHTML =
+            "Total records loaded: " +
+            formatNumber(allData.length);
+
+
+        console.log(
+            "Loaded records:",
+            allData.length
+        );
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            "JSON loading error:",
+            error
+        );
+
+
+        showStatus(
+
+            "<strong>Unable to load allotment data.</strong>" +
+
+            "<br><br>" +
+
+            "Please make sure that " +
+
+            "<b>allotment_data.json</b> " +
+
+            "is uploaded in the same folder as " +
+
+            "<b>index.html</b>." +
+
+            "<br><br>" +
+
+            "Error: " +
+
+            escapeHTML(error.message),
+
+            "error"
+
+        );
+
+
+        resultsDiv.innerHTML = `
+
+            <div class="empty">
+
+                <h3>
+                    Allotment data could not be loaded
+                </h3>
+
+                <p>
+                    Check your GitHub repository.
+                </p>
+
+                <p>
+                    Required files:
+                </p>
+
+                <p>
+                    <b>index.html</b>
+                    <br>
+                    <b>allotment_data.json</b>
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/*
+=========================================================
+CHANGE CAP ROUND
+=========================================================
+*/
+
+function changeRound(round) {
+
+    currentRound =
+        round;
+
+
+    document.getElementById(
+        "roundTitle"
+    ).textContent =
+        round;
+
+
+    document.getElementById(
+        "cap1Btn"
+    ).classList.toggle(
+        "active",
+        round === 1
+    );
+
+
+    document.getElementById(
+        "cap2Btn"
+    ).classList.toggle(
+        "active",
+        round === 2
+    );
+
+
+    searchInput.value =
+        "";
+
+
+    resultsDiv.innerHTML = `
+
+        <div class="empty">
+
+            Enter an Application ID
+            or candidate name to search
+            CAP Round ${round}.
+
+        </div>
+
+    `;
+
+
+    resultCount.innerHTML =
+        "";
+
+}
+
+
+
+/*
+=========================================================
+GET APPLICATION ID
+=========================================================
+*/
+
+function getApplicationID(record) {
+
+    return (
+
+        record.application_id ??
+
+        record.applicationId ??
+
+        record.app_id ??
+
+        record.applicationID ??
+
+        record.Application_ID ??
+
+        "N/A"
+
+    );
+
+}
+
+
+
+/*
+=========================================================
+GET CANDIDATE NAME
+=========================================================
+*/
+
+function getName(record) {
+
+    return (
+
+        record.name ??
+
+        record.candidate_name ??
+
+        record.candidateName ??
+
+        record.candidate ??
+
+        record.Name ??
+
+        "N/A"
+
+    );
+
+}
+
+
+
+/*
+=========================================================
+SEARCH
+=========================================================
+*/
+
+searchInput.addEventListener(
+    "input",
+    searchData
+);
+
+
+
+function searchData() {
+
+
+    const query =
+
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+
+    if (!query) {
+
+
+        resultsDiv.innerHTML = `
+
+            <div class="empty">
+
+                Enter an Application ID
+                or candidate name to search.
+
+            </div>
+
+        `;
+
+
+        resultCount.innerHTML =
+            "";
+
+        return;
 
     }
 
 
-    function displayResults(records) {
 
-        resultCount.innerHTML =
-            records.length +
-            " result(s) found";
-
-
-        if (records.length === 0) {
-
-            resultsDiv.innerHTML = `
-                <div class="empty">
-                    No allotment record found.
-                </div>
-            `;
-
-            return;
-        }
+    const filtered =
+        allData.filter(
+            record => {
 
 
-        resultsDiv.innerHTML =
-            records.map(record => {
+                const applicationID =
 
-                const applicationId =
-                    record.application_id ||
-                    record.applicationId ||
-                    record.app_id ||
-                    "N/A";
+                    String(
+                        getApplicationID(record)
+                    )
+                    .toLowerCase();
+
 
                 const name =
-                    record.name ||
-                    record.candidate_name ||
-                    record.candidateName ||
-                    "N/A";
+
+                    String(
+                        getName(record)
+                    )
+                    .toLowerCase();
+
+
+                return (
+
+                    applicationID === query ||
+
+                    name.includes(query)
+
+                );
+
+            }
+        );
+
+
+
+    displayResults(
+        filtered
+    );
+
+}
+
+
+
+/*
+=========================================================
+DISPLAY RESULTS
+=========================================================
+*/
+
+function displayResults(
+    records
+) {
+
+
+    resultCount.innerHTML =
+
+        formatNumber(records.length) +
+
+        " result(s) found";
+
+
+
+    if (
+        records.length === 0
+    ) {
+
+
+        resultsDiv.innerHTML = `
+
+            <div class="empty">
+
+                <h3>
+                    No allotment record found
+                </h3>
+
+                <p>
+                    Try another Application ID
+                    or candidate name.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    resultsDiv.innerHTML =
+
+        records.map(
+            record => {
+
+
+                /*
+                BASIC INFORMATION
+                */
+
+
+                const applicationID =
+
+                    getApplicationID(
+                        record
+                    );
+
+
+                const name =
+
+                    getName(
+                        record
+                    );
+
 
                 const gender =
-                    record.gender || "N/A";
+
+                    record.gender ??
+
+                    record.Gender ??
+
+                    "N/A";
+
 
                 const category =
-                    record.category || "N/A";
+
+                    record.category ??
+
+                    record.Category ??
+
+                    "N/A";
+
 
                 const seatType =
-                    record.seat_type ||
-                    record.seatType ||
+
+                    record.seat_type ??
+
+                    record.seatType ??
+
+                    record.Seat_Type ??
+
                     "N/A";
+
+
+                /*
+                COLLEGE / INSTITUTE
+                */
+
 
                 const institute =
-                    record.institute ||
-                    record.institute_name ||
-                    record.college ||
-                    record.college_name ||
+
+                    record.institute ??
+
+                    record.institute_name ??
+
+                    record.instituteName ??
+
+                    record.college ??
+
+                    record.college_name ??
+
+                    record.collegeName ??
+
+                    record.Institute ??
+
                     "N/A";
+
+
+                /*
+                COURSE
+                */
+
 
                 const course =
-                    record.course ||
-                    record.course_name ||
+
+                    record.course ??
+
+                    record.course_name ??
+
+                    record.courseName ??
+
+                    record.Course ??
+
                     "N/A";
 
+
+                /*
+                MERIT / RANK
+                */
+
+
                 const merit =
-                    record.merit ||
-                    record.merit_number ||
-                    record.rank ||
-                    "N/A";
+
+                    record.merit ??
+
+                    record.merit_number ??
+
+                    record.meritNumber ??
+
+                    record.rank ??
+
+                    record.Rank ??
+
+                    null;
+
+
+                /*
+                OTHER COMMON FIELDS
+                */
+
+
+                const meritDisplay =
+                    formatNumber(
+                        merit
+                    );
+
+
+
+                const round =
+
+                    record.round ??
+
+                    record.cap_round ??
+
+                    record.capRound ??
+
+                    currentRound;
+
 
 
                 return `
 
                     <div class="result">
 
-                        <h3>${escapeHTML(name)}</h3>
+                        <h3>
+
+                            ${escapeHTML(
+                                safeValue(name)
+                            )}
+
+                        </h3>
+
 
                         <div class="details">
 
+
                             <div class="detail">
+
                                 <span class="label">
                                     Application ID
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(applicationId)}
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            applicationID
+                                        )
+                                    )}
+
                                 </span>
+
                             </div>
 
 
+
                             <div class="detail">
+
+                                <span class="label">
+                                    CAP Round
+                                </span>
+
+                                <span class="value">
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            round
+                                        )
+                                    )}
+
+                                </span>
+
+                            </div>
+
+
+
+                            <div class="detail">
+
                                 <span class="label">
                                     Gender
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(gender)}
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            gender
+                                        )
+                                    )}
+
                                 </span>
+
                             </div>
 
 
+
                             <div class="detail">
+
                                 <span class="label">
                                     Category
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(category)}
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            category
+                                        )
+                                    )}
+
                                 </span>
+
                             </div>
 
 
+
                             <div class="detail">
+
                                 <span class="label">
                                     Seat Type
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(seatType)}
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            seatType
+                                        )
+                                    )}
+
                                 </span>
+
                             </div>
 
 
+
                             <div class="detail">
+
                                 <span class="label">
-                                    Institute
+                                    Institute / College
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(institute)}
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            institute
+                                        )
+                                    )}
+
                                 </span>
+
                             </div>
 
 
+
                             <div class="detail">
+
                                 <span class="label">
                                     Course
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(course)}
+
+                                    ${escapeHTML(
+                                        safeValue(
+                                            course
+                                        )
+                                    )}
+
                                 </span>
+
                             </div>
 
 
+
                             <div class="detail">
+
                                 <span class="label">
                                     Merit / Rank
                                 </span>
 
                                 <span class="value">
-                                    ${escapeHTML(merit)}
+
+                                    ${escapeHTML(
+                                        meritDisplay
+                                    )}
+
                                 </span>
+
                             </div>
+
 
                         </div>
 
@@ -625,49 +1364,26 @@
 
                 `;
 
-            }).join("");
+            }
+        )
+        .join("");
 
-    }
-
-
-    function escapeHTML(value) {
-
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-
-    }
+}
 
 
-    function showStatus(message, type) {
 
-        statusDiv.innerHTML = message;
+/*
+=========================================================
+START APPLICATION
+=========================================================
+*/
 
-        statusDiv.className =
-            "status " + type;
+loadData();
 
-        statusDiv.style.display = "block";
-
-    }
-
-
-    function hideStatus() {
-
-        statusDiv.style.display = "none";
-
-    }
-
-
-    /*
-        Load JSON when page opens.
-    */
-
-    loadData();
 
 </script>
 
+
 </body>
+
 </html>
